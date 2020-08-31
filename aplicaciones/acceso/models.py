@@ -3,15 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here
 
-class TipoTabla(models.Model):
-	tipo = models.CharField('Tipo de tabla:', max_length = 20, null = False, blank = False)
 
-	class Meta:
-		verbose_name        = "Tipo de tabla"
-		verbose_name_plural = "Tipos de tablas"
-
-	def __str__(self):
-		return self.Tipo
 
 class Empresas(models.Model):
 	nit            = models.CharField('NIT:',max_length = 60, null = False , blank = False)
@@ -20,8 +12,7 @@ class Empresas(models.Model):
 	telefonos      = models.CharField('telefonos de la empresa:', max_length = 80)
 	usuario        = models.ForeignKey(User, on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	estado         = models.BooleanField(default = True)
-    id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 1)
+	estado         = models.BooleanField(default = True)    
 
 
 	class Meta:
@@ -29,7 +20,8 @@ class Empresas(models.Model):
 		verbose_name_plural = "Empresas"
 
 	def __str__(self):
-		return self.Nit +"\t"+ self.nombre
+		return self.nit +"\t"+ self.nombre
+
 
 class Fincas(models.Model):
 	nombre              = models.CharField('nombre:', max_length = 60, null = False, blank = False)
@@ -38,7 +30,17 @@ class Fincas(models.Model):
 	responsable         = models.CharField(max_length = 100, blank = False)
 	id_usuario             = models.ForeignKey(User, on_delete = models.PROTECT)
 	fecha_creacion      = models.DateTimeField(auto_now = False, auto_now_add = True)
-    id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 1)
+
+
+class TipoTabla(models.Model):
+	tipo = models.CharField('Tipo de tabla:', max_length = 20, null = False, blank = False)
+
+	class Meta:
+		verbose_name        = "Tipo de tabla"
+		verbose_name_plural = "Tipos de tablas"
+
+	def __str__(self):
+		return self.tipo
 
 
 class Cargos(models.Model):
@@ -57,7 +59,7 @@ class Cargos(models.Model):
 
 
 	def __str__(self):
-		return self.id + "\t" + self.Cargo
+		return self.id + "\t" + self.cargo
 
 class TipoEmpleado(models.Model):
 	tipo           = models.CharField('Tipo de empleado:', max_length = 20, null = False, blank = False)
@@ -74,7 +76,7 @@ class TipoEmpleado(models.Model):
 
 
 	def __str__(self):
-		return self.id + "\t" + self.Tipo
+		return self.id + "\t" + self.tipo
 
 
 class Empleados(models.Model):
@@ -98,7 +100,7 @@ class Empleados(models.Model):
 		verbose_name_plural = "Empleados"
 
 	def __str__(self):
-		return self.Cedula + "\t" + self.nombre
+		return self.cedula + "\t" + self.nombre
 
 class Color(models.Model):
 	color          = models.CharField('Color:', max_length = 20, blank = False, null = False)
@@ -115,7 +117,7 @@ class Color(models.Model):
 
 
 	def __str__(self):
-		self.id + "\t" + self.Color
+		self.id + "\t" + self.color
 
 class SemanaAnio(models.Model):
 	semana         = models.IntegerField('Semana del año:', null = False, blank = False)
@@ -135,7 +137,7 @@ class SemanaAnio(models.Model):
 		verbose_name = "Semanas del año"
 
 	def __str__(self):
-		return self.id + "\t" + self.Semana
+		return self.id + "\t" + self.semana
 
 class EntradaSalidaEmp(models.Model):
 	id_empleado     = models.ForeignKey(Empleados, on_delete = models.PROTECT)
@@ -156,7 +158,7 @@ class EntradaSalidaEmp(models.Model):
 		verbose_name = "Entradas y salidas de empleados"
 
 	def __str__(self):
-		return self.idEmpleado + "\t" + self.nombreApellido
+		return self.id_empleado + "\t" + self.fecha
 
 class Programacion(models.Model):
 	fecha          = models.DateTimeField('Fecha de programacion:', auto_now_add = False)
@@ -173,7 +175,7 @@ class Programacion(models.Model):
 		verbose_name_plural = "Programaciones"
 
 	def __str__(self):
-		return self.idSemana +"\t" + self.Fecha
+		return self.id_semana +"\t" + self.fecha
 
 class Labores(models.Model):
 	labor          = models.CharField('Labor:', max_length = 60, null = False, blank = False)
@@ -190,7 +192,7 @@ class Labores(models.Model):
 		verbose_name_plural = "Labores"
 
 	def __str__(self):
-		return self.id +"\t"+ self.Labor
+		return self.id +"\t"+ self.labor
 
 class Procesos(models.Model):
 	procesos       = models.CharField('Procesos:', max_length = 60, null = False, blank = False)
@@ -207,7 +209,7 @@ class Procesos(models.Model):
 		verbose_name_plural = "Procesos"
 
 	def __str__(self):
-		return self.id +"\t"+ self.Procesos
+		return self.id +"\t"+ self.procesos
 
 class DetalleProgramacion(models.Model):
 	id_programacion = models.ForeignKey(Programacion, on_delete = models.PROTECT)
@@ -226,7 +228,7 @@ class DetalleProgramacion(models.Model):
 		verbose_name_plural = "Detalles de programaciones"
 
 	def __str__(self):
-		return self.idProgramacion +"\t"+ self.idEmpleado +"\t"+ self.idLabor +"\t"+ self.idProceso
+		return self.id_programacion +"\t"+ self.id_empleado +"\t"+ self.id_labor +"\t"+ self.id_proceso
 
 class FuncionesEmpleados(models.Model):
 	funcion        = models.CharField('Funcion:', max_length = 60, null = False, blank = False)
@@ -242,7 +244,7 @@ class FuncionesEmpleados(models.Model):
 		verbose_name_plural = "Funciones de los empleados"
 
 	def __str__(self):
-		return self.id +"\t"+ self.Funcion
+		return self.id +"\t"+ self.funcion
 
 class FuncionesXEmpleados(models.Model):
 	id_funcion      = models.ForeignKey(FuncionesEmpleados, on_delete = models.PROTECT)
@@ -260,7 +262,7 @@ class FuncionesXEmpleados(models.Model):
 		return self.id
 
 class Visitantes(models.Model):
-	nit_edula      = models.CharField('Nit / Cedula:', max_length = 60,)
+	nit_cedula      = models.CharField('Nit / Cedula:', max_length = 60,)
 	nombre_apellido = models.CharField('nombre y Apellidos', max_length = 60)
 	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
 	estado         = models.BooleanField(default = True)
@@ -273,7 +275,7 @@ class Visitantes(models.Model):
 		verbose_name_plural = "Visitantes"
 
 	def __str__(self):
-		return self.nitCedula +"\t"+ self.nombreApellido
+		return self.nit_cedula +"\t"+ self.nombre_apellido
 
 class EntradaSalidaVisitas(models.Model):
 	id_visitante    = models.ForeignKey(Visitantes, on_delete = models.PROTECT)
@@ -295,7 +297,7 @@ class EntradaSalidaVisitas(models.Model):
 		verbose_name_plural = "Entradas y salidas de visitas"
 
 	def __str__(self):
-		return self.idVisitante +"\t"+ self.Fecha
+		return self.id_visitante +"\t"+ self.fecha
 
 class EntradaVehiculos(models.Model):
 	id_visitante     = models.ForeignKey(Visitantes, on_delete = models.PROTECT, null = True, blank = True)
@@ -317,7 +319,7 @@ class EntradaVehiculos(models.Model):
 		verbose_name_plural = "Entrada y salida de vehiculos"
 
 	def __str__(self):
-		return self.idVisitante +"\t"+ self.placaVehiculo
+		return self.id_visitante +"\t"+ self.placa_vehiculo
 
 
 
