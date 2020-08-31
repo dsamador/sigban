@@ -3,34 +3,8 @@ from django.contrib.auth.models import User
 
 # Create your models here
 
-class Empresas(models.Model):
-	Nit            = models.CharField('NIT:',max_length = 60, null = False , blank = False)
-	Nombre         = models.CharField('Nombre:', max_length = 60, null = False, blank = False)
-	Direccion      = models.CharField('Direccion:', max_length = 100, null = False , blank = False)
-	Telefonos      = models.CharField('Telefonos de la empresa:', max_length = 80)
-	usuario        = models.ForeignKey(User, on_delete = models.CASCADE)
-	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	Estado         = models.BooleanField(default = True)
-
-
-	class Meta:
-		verbose_name        = "Empresa"
-		verbose_name_plural = "Empresas"
-
-	def __str__(self):
-		return self.Nit +"\t"+ self.Nombre
-
-class Fincas(models.Model):
-	Nombre              = models.CharField('Nombre:', max_length = 60, null = False, blank = False)
-	Direccion           = models.CharField('Direccion:', max_length = 100, null = False , blank = False)
-	ubicacionGeofrafica = models.CharField('Ubicacion geografica', max_length = 60 , blank = False)
-	Responsable         = models.CharField(max_length = 100, blank = False)
-	usuario             = models.ForeignKey(User, on_delete = models.CASCADE)
-	fecha_creacion      = models.DateTimeField(auto_now = False, auto_now_add = True)
-
-
-class tipoTabla(models.Model):
-	Tipo = models.CharField('Tipo de tabla:', max_length = 80, null = False, blank = False)
+class TipoTabla(models.Model):
+	tipo = models.CharField('Tipo de tabla:', max_length = 20, null = False, blank = False)
 
 	class Meta:
 		verbose_name        = "Tipo de tabla"
@@ -39,15 +13,42 @@ class tipoTabla(models.Model):
 	def __str__(self):
 		return self.Tipo
 
+class Empresas(models.Model):
+	nit            = models.CharField('NIT:',max_length = 60, null = False , blank = False)
+	nombre         = models.CharField('nombre:', max_length = 60, null = False, blank = False)
+	direccion      = models.CharField('direccion:', max_length = 100, null = False , blank = False)
+	telefonos      = models.CharField('telefonos de la empresa:', max_length = 80)
+	usuario        = models.ForeignKey(User, on_delete = models.PROTECT)
+	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
+	estado         = models.BooleanField(default = True)
+    id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 1)
+
+
+	class Meta:
+		verbose_name        = "Empresa"
+		verbose_name_plural = "Empresas"
+
+	def __str__(self):
+		return self.Nit +"\t"+ self.nombre
+
+class Fincas(models.Model):
+	nombre              = models.CharField('nombre:', max_length = 60, null = False, blank = False)
+	direccion           = models.CharField('direccion:', max_length = 100, null = False , blank = False)
+	ubicacion_geofrafica = models.CharField('Ubicacion geografica', max_length = 60 , blank = False)
+	responsable         = models.CharField(max_length = 100, blank = False)
+	id_usuario             = models.ForeignKey(User, on_delete = models.PROTECT)
+	fecha_creacion      = models.DateTimeField(auto_now = False, auto_now_add = True)
+    id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 1)
+
 
 class Cargos(models.Model):
-	Cargo          = models.CharField('Cargo:', max_length = 40 , null = False, blank = False)
-	Descripcion    = models.CharField('Descripcion del cargo:', max_length = 300)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	cargo          = models.CharField('Cargo:', max_length = 40 , null = False, blank = False)
+	descripcion    = models.CharField('Descripcion del cargo:', max_length = 300)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE , default = 1)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 1)
 
 
 	class Meta:
@@ -59,13 +60,13 @@ class Cargos(models.Model):
 		return self.id + "\t" + self.Cargo
 
 class TipoEmpleado(models.Model):
-	Tipo           = models.CharField('Tipo de empleado:', max_length = 20, null = False, blank = False)
-	Descripcion    = models.CharField('Descripcion:', max_length = 100)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	tipo           = models.CharField('Tipo de empleado:', max_length = 20, null = False, blank = False)
+	descripcion    = models.CharField('Descripcion:', max_length = 100)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE , default = 1)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 1)
 
 	class Meta:
 		verbose_name        = "Tipo de empleado"
@@ -77,19 +78,19 @@ class TipoEmpleado(models.Model):
 
 
 class Empleados(models.Model):
-	Cedula         = models.CharField('Cedula:', max_length = 50, null=False, blank=False)
-	Nombre         = models.CharField('Nombre del empleado:', max_length = 20)
-	Apellido       = models.CharField('Apellido del empledado:', max_length = 20)
-	idCargo        = models.ForeignKey(Cargos,on_delete = models.CASCADE)
-	idTipoEmp      = models.ForeignKey(TipoEmpleado,on_delete = models.CASCADE)
-	Direccion      = models.CharField('Direccion del empleado:',max_length = 100 , null = False, blank = False)
-	Telefonos      = models.CharField('Telefonos del empleado:', max_length = 80)
-	Mail           = models.CharField('Correo Electronico:', max_length = 30)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	cedula         = models.CharField('Cedula:', max_length = 50, null=False, blank=False)
+	nombre         = models.CharField('nombre del empleado:', max_length = 20)
+	apellido       = models.CharField('Apellido del empledado:', max_length = 20)
+	id_cargo        = models.ForeignKey(Cargos,on_delete = models.PROTECT)
+	id_tipo_emp      = models.ForeignKey(TipoEmpleado,on_delete = models.PROTECT)
+	direccion      = models.CharField('direccion del empleado:',max_length = 100 , null = False, blank = False)
+	telefonos      = models.CharField('telefonos del empleado:', max_length = 80)
+	email           = models.CharField('Correo Electronico:', max_length = 30)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 2)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 2)
 
 
 	class Meta:
@@ -97,15 +98,15 @@ class Empleados(models.Model):
 		verbose_name_plural = "Empleados"
 
 	def __str__(self):
-		return self.Cedula + "\t" + self.Nombre
+		return self.Cedula + "\t" + self.nombre
 
 class Color(models.Model):
-	Color          = models.CharField('Color:', max_length = 20, blank = False, null = False)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	color          = models.CharField('Color:', max_length = 20, blank = False, null = False)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 1)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 1)
 
 
 	class Meta:
@@ -117,16 +118,16 @@ class Color(models.Model):
 		self.id + "\t" + self.Color
 
 class SemanaAnio(models.Model):
-	Semana         = models.IntegerField('Semana del año:', null = False, blank = False)
-	idColor        = models.ForeignKey(Color,on_delete = models.CASCADE)
-	Year           = models.IntegerField('Año', null = False, blank = False)
-	fechaInicial   = models.DateTimeField('Fecha Inicial:', auto_now_add = False)
-	fechaFinal     = models.DateTimeField('Fecha Final:', auto_now_add = False)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	semana         = models.IntegerField('Semana del año:', null = False, blank = False)
+	id_color        = models.ForeignKey(Color,on_delete = models.PROTECT)
+	year           = models.IntegerField('Año', null = False, blank = False)
+	fecha_inicial   = models.DateTimeField('Fecha Inicial:', auto_now_add = False)
+	fecha_final     = models.DateTimeField('Fecha Final:', auto_now_add = False)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE , default = 2)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 2)
 
 
 	class Meta:
@@ -137,18 +138,18 @@ class SemanaAnio(models.Model):
 		return self.id + "\t" + self.Semana
 
 class EntradaSalidaEmp(models.Model):
-	idEmpleado     = models.ForeignKey(Empleados, on_delete = models.CASCADE)
-	Fecha          = models.DateTimeField('Fecha:',auto_now_add = False)
-	idSemana       = models.ForeignKey(SemanaAnio, on_delete = models.CASCADE)
-	horaEntrada    = models.TimeField('Hora de entrada:', auto_now_add = False)
-	detalleEntrada = models.CharField('Detalle de la entrada:', max_length = 200, null = False, blank = False)
-	horaSalida     = models.TimeField('Hora de Salida:', auto_now_add = False)
-	detalleSalida  = models.CharField('Detalle de la Salida:', max_length = 200, null = False, blank = False)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	id_empleado     = models.ForeignKey(Empleados, on_delete = models.PROTECT)
+	fecha          = models.DateTimeField('Fecha:',auto_now_add = False)
+	id_semana       = models.ForeignKey(SemanaAnio, on_delete = models.PROTECT)
+	hora_entrada    = models.TimeField('Hora de entrada:', auto_now_add = False)
+	detalle_entrada = models.CharField('Detalle de la entrada:', max_length = 200, null = False, blank = False)
+	hora_salida     = models.TimeField('Hora de Salida:', auto_now_add = False)
+	detalle_salida  = models.CharField('Detalle de la Salida:', max_length = 200, null = False, blank = False)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 2)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 2)
 
 	class Meta:
 		verbose_name = "Entrada y salida de empleado"
@@ -158,13 +159,13 @@ class EntradaSalidaEmp(models.Model):
 		return self.idEmpleado + "\t" + self.nombreApellido
 
 class Programacion(models.Model):
-	Fecha          = models.DateTimeField('Fecha de programacion:', auto_now_add = False)
-	idSemana       = models.ForeignKey(SemanaAnio, on_delete = models.CASCADE)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	fecha          = models.DateTimeField('Fecha de programacion:', auto_now_add = False)
+	id_semana       = models.ForeignKey(SemanaAnio, on_delete = models.PROTECT)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 2)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 2)
 	
 
 	class Meta:
@@ -175,13 +176,13 @@ class Programacion(models.Model):
 		return self.idSemana +"\t" + self.Fecha
 
 class Labores(models.Model):
-	Labor          = models.CharField('Labor:', max_length = 60, null = False, blank = False)
-	Descripcion    = models.CharField('Descripcion de la labor:', max_length = 60)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	labor          = models.CharField('Labor:', max_length = 60, null = False, blank = False)
+	descripcion    = models.CharField('Descripcion de la labor:', max_length = 60)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE , default = 1)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 1)
 
 
 	class Meta:
@@ -192,13 +193,13 @@ class Labores(models.Model):
 		return self.id +"\t"+ self.Labor
 
 class Procesos(models.Model):
-	Procesos       = models.CharField('Procesos:', max_length = 60, null = False, blank = False)
-	Descripcion    = models.CharField('Descripcion del proceso:', max_length = 60)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
-	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 1)
+	procesos       = models.CharField('Procesos:', max_length = 60, null = False, blank = False)
+	descripcion    = models.CharField('Descripcion del proceso:', max_length = 60)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
+	id_fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 1)
 
 
 	class Meta:
@@ -209,15 +210,15 @@ class Procesos(models.Model):
 		return self.id +"\t"+ self.Procesos
 
 class DetalleProgramacion(models.Model):
-	idProgramacion = models.ForeignKey(Programacion, on_delete = models.CASCADE)
-	idEmpleado     = models.ForeignKey(Empleados, on_delete = models.CASCADE)
-	idLabor        = models.ForeignKey(Labores, on_delete = models.CASCADE)
-	idProceso      = models.ForeignKey(Procesos, on_delete = models.CASCADE)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	id_programacion = models.ForeignKey(Programacion, on_delete = models.PROTECT)
+	id_empleado     = models.ForeignKey(Empleados, on_delete = models.PROTECT)
+	id_labor        = models.ForeignKey(Labores, on_delete = models.PROTECT)
+	id_proceso      = models.ForeignKey(Procesos, on_delete = models.PROTECT)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 2)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 2)
 
 
 	class Meta:
@@ -228,13 +229,13 @@ class DetalleProgramacion(models.Model):
 		return self.idProgramacion +"\t"+ self.idEmpleado +"\t"+ self.idLabor +"\t"+ self.idProceso
 
 class FuncionesEmpleados(models.Model):
-	Funcion        = models.CharField('Funcion:', max_length = 60, null = False, blank = False)
-	Descripcion    = models.CharField('Descripcion de la funcion:', max_length = 300)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	funcion        = models.CharField('Funcion:', max_length = 60, null = False, blank = False)
+	descripcion    = models.CharField('Descripcion de la funcion:', max_length = 300)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 1)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 1)
 
 	class Meta:
 		verbose_name        = "Funcion del empleado"
@@ -244,13 +245,13 @@ class FuncionesEmpleados(models.Model):
 		return self.id +"\t"+ self.Funcion
 
 class FuncionesXEmpleados(models.Model):
-	idFuncion      = models.ForeignKey(FuncionesEmpleados, on_delete = models.CASCADE)
-	idEmpleado     = models.ForeignKey(Empleados, on_delete = models.CASCADE)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	id_funcion      = models.ForeignKey(FuncionesEmpleados, on_delete = models.PROTECT)
+	id_empleado     = models.ForeignKey(Empleados, on_delete = models.PROTECT)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE , default = 2)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT , default = 2)
 
 	class Meta:
 		verbose_name = "FuncionesXEmpleado"
@@ -259,13 +260,13 @@ class FuncionesXEmpleados(models.Model):
 		return self.id
 
 class Visitantes(models.Model):
-	nitCedula      = models.CharField('Nit / Cedula:', max_length = 60,)
-	nombreApellido = models.CharField('Nombre y Apellidos', max_length = 60)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	nit_edula      = models.CharField('Nit / Cedula:', max_length = 60,)
+	nombre_apellido = models.CharField('nombre y Apellidos', max_length = 60)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 1)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 1)
 
 	class Meta:
 		verbose_name        = "Visitante"
@@ -275,18 +276,18 @@ class Visitantes(models.Model):
 		return self.nitCedula +"\t"+ self.nombreApellido
 
 class EntradaSalidaVisitas(models.Model):
-	idVisitante    = models.ForeignKey(Visitantes, on_delete = models.CASCADE)
-	Fecha          = models.DateTimeField('Fecha:', auto_now_add = False)
-	idSemana       = models.ForeignKey(SemanaAnio, on_delete = models.CASCADE)
-	horaEntrada    = models.TimeField('Hora de Entrada:', auto_now_add = False)
-	detalleEntrada = models.CharField('Detalle de entrada:', max_length = 200, null = False, blank = False)
-	horaSalida     = models.TimeField('Hora de salida:', auto_now_add = False)
-	detalleSalida  = models.CharField('Detalle de la salida:', max_length = 200, null = False)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
+	id_visitante    = models.ForeignKey(Visitantes, on_delete = models.PROTECT)
+	fecha          = models.DateTimeField('Fecha:', auto_now_add = False)
+	id_semana       = models.ForeignKey(SemanaAnio, on_delete = models.PROTECT)
+	hora_entrada    = models.TimeField('Hora de Entrada:', auto_now_add = False)
+	detalle_entrada = models.CharField('Detalle de entrada:', max_length = 200, null = False, blank = False)
+	hora_salida     = models.TimeField('Hora de salida:', auto_now_add = False)
+	detalle_salida  = models.CharField('Detalle de la salida:', max_length = 200, null = False)
+	id_finca          = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado         = models.BooleanField(default = True)
+	id_usuario        = models.ForeignKey(User ,on_delete = models.PROTECT)
 	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 2)
+	id_tipo_tabla    = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 2)
 
 
 	class Meta:
@@ -297,19 +298,19 @@ class EntradaSalidaVisitas(models.Model):
 		return self.idVisitante +"\t"+ self.Fecha
 
 class EntradaVehiculos(models.Model):
-	idVisitante    = models.ForeignKey(Visitantes, on_delete = models.CASCADE, null = True, blank = True)
-	idEmpleado     = models.ForeignKey(Empleados , on_delete = models.CASCADE, null = True, blank = True)
-	placaVehiculo  = models.CharField('Placa del vehiculo:', max_length = 20)
-	cargaEntrada   = models.CharField('Carga de entrada:', max_length = 40, null = False, blank = False)
-	cargaSalida    = models.CharField('Carga de la salida:', max_length = 40, null = False, blank = False)
-	NPoma          = models.IntegerField(null = False, blank = False)
-	cantidadPales  = models.IntegerField(null = False, blank = False)
-	cajasSueltas   = models.IntegerField(null = False, blank = False)
-	Finca          = models.ForeignKey(Fincas, on_delete = models.CASCADE)
-	Estado         = models.BooleanField(default = True)
-	usuario        = models.ForeignKey(User ,on_delete = models.CASCADE)
-	fecha_creacion = models.DateTimeField(auto_now = False, auto_now_add = True)
-	idTipoTabla    = models.ForeignKey(tipoTabla, on_delete = models.CASCADE, default = 2)
+	id_visitante     = models.ForeignKey(Visitantes, on_delete = models.PROTECT, null = True, blank = True)
+	id_empleado      = models.ForeignKey(Empleados , on_delete = models.PROTECT, null = True, blank = True)
+	placa_vehiculo   = models.CharField('Placa del vehiculo:', max_length = 20)
+	carga_entrada    = models.CharField('Carga de entrada:', max_length = 40, null = False, blank = False)
+	carga_salida     = models.CharField('Carga de la salida:', max_length = 40, null = False, blank = False)
+	n_poma          = models.IntegerField(null = False, blank = False)
+	cantidad_pales   = models.IntegerField(null = False, blank = False)
+	cajas_sueltas    = models.IntegerField(null = False, blank = False)
+	id_finca           = models.ForeignKey(Fincas, on_delete = models.PROTECT)
+	estado          = models.BooleanField(default = True)
+	id_usuario         = models.ForeignKey(User ,on_delete = models.PROTECT)
+	fecha_creacion  = models.DateTimeField(auto_now = False, auto_now_add = True)
+	id_tipo_tabla     = models.ForeignKey(TipoTabla, on_delete = models.PROTECT, default = 2)
 
 	class Meta:
 		verbose_name        = "Entrada y salida de vehiculo"
