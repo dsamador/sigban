@@ -1,0 +1,35 @@
+{% extends 'body.html' %}
+  
+<!-- Empleado, Hora entrada y detalle entrada -->
+{% block content %}
+<div class="row">    
+    <!-- left column -->
+    <div class="col-md-4 ">
+      <!-- general form elements -->
+      <div class="card card-info fadeIn">
+        <div class="card-header">
+          <h3 class="card-title">Escoja una opción</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <a href="{% url 'acceso:entrada_empleado_vehiculo' %}" class="btn btn-block btn-lg btn-outline-info">Empleado con vehículo <i class="fas fa-motorcycle"></i> | <i class="fas fa-car"></i></a>
+          <a href="" class="btn btn-block btn-lg btn-outline-info">Empleado sin vehículo <i class="fas fa-female"></i> | <i class="fas fa-male"></i></a>
+        </div>
+        
+      </div>
+      <!-- /.card -->      
+    </div>
+    <!--/.col (left) -->   
+    
+    {% block column-right %}
+      
+    {% endblock column-right %}
+          
+  </div>
+{% endblock content %}
+
+
+{% block javascript %}
+  
+{% endblock javascript %}
+  

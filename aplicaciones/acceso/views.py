@@ -11,11 +11,19 @@ class Prueba(TemplateView):
     template_name = "prueba.html"
 
 class EntradaEmpleadoView(TemplateView):
-    template_name = "entrada_salida/entradas_empleado.html"
+    template_name = "entrada_salida/entradas.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Entradas'                        
+        return context         
+
+class EntradaEmpleadoVehiculoView(TemplateView):
+    template_name = "entrada_salida/entrada_empleado_vehiculo.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Entradas | Empleado con vehículo'                        
         return context         
 
     
