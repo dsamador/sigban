@@ -25,7 +25,7 @@ SECRET_KEY = '95yv=t32llm)(u0)9wl^xwt=q&aq&q9b)+&$&m)cwd-_gep(o8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

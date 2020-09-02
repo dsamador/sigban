@@ -3,12 +3,12 @@ from .models import *
 
 # Register your models here.
 
-class tipoTablaAdmin(admin.ModelAdmin):
-	list_display  = ('id','Tipo')
+class TipoTablaAdmin(admin.ModelAdmin):
+	list_display  = ('id','tipo')
 
 
 
-admin.site.register(tipoTabla,tipoTablaAdmin)
+admin.site.register(TipoTabla,TipoTablaAdmin)
 admin.site.register(Empresas)
 admin.site.register(Fincas)
 admin.site.register(Cargos)
